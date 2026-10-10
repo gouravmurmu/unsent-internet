@@ -1,26 +1,154 @@
 @import "tailwindcss";
 
+/* Design tokens for The Unsent Internet. */
+@theme {
+  --color-cloud: #b9deff;
+  --color-cloud-deep: #8fc6f5;
+  --color-cream: #fff8e9;
+  --color-paper: #fffdf6;
+  --color-pink: #ff91b8;
+  --color-pink-soft: #ffd3e3;
+  --color-lilac: #cbb9ff;
+  --color-lilac-soft: #e8e0ff;
+  --color-butter: #ffe58a;
+  --color-butter-soft: #fff3c4;
+  --color-ink: #292743;
+  --color-ink-soft: #55526f;
+  --color-line: #e6dcc6;
+
+  --font-display: var(--font-fredoka), "Trebuchet MS", sans-serif;
+  --font-sans: var(--font-nunito-sans), system-ui, sans-serif;
+  --font-hand: var(--font-caveat), "Comic Sans MS", cursive;
+  --font-pixel: var(--font-pixelify), ui-monospace, monospace;
+
+  --shadow-paper: 0 1px 0 rgb(41 39 67 / 0.06), 0 6px 14px -8px rgb(41 39 67 / 0.25);
+  --shadow-press: 0 3px 0 0 var(--color-ink);
+  --shadow-pressed: 0 1px 0 0 var(--color-ink);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-cream);
+  /* A faint paper grain made from two dot layers, no image request needed. */
+  background-image:
+    radial-gradient(rgb(41 39 67 / 0.035) 1px, transparent 1px),
+    radial-gradient(rgb(41 39 67 / 0.025) 1px, transparent 1px);
+  background-size: 22px 22px, 13px 13px;
+  background-position: 0 0, 7px 9px;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-butter);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 3px dashed var(--color-ink);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@layer components {
+  /* Tactile button: sits on a hard ink shadow and presses down on click. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.6rem 1.25rem;
+    border: 2px solid var(--color-ink);
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    color: var(--color-ink);
+    box-shadow: var(--shadow-press);
+    transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 0 var(--color-ink);
+  }
+  .btn:active {
+    transform: translateY(2px);
+    box-shadow: var(--shadow-pressed);
+  }
+  .btn-primary {
+    background: var(--color-pink);
+  }
+  .btn-primary:hover {
+    background: #ff7fab;
+  }
+  .btn-secondary {
+    background: var(--color-paper);
+  }
+  .btn-secondary:hover {
+    background: var(--color-butter-soft);
+  }
+
+  /* Ruled paper, used for notes and the diary. */
+  .ruled {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 1.7rem,
+      rgb(143 198 245 / 0.45) 1.7rem,
+      rgb(143 198 245 / 0.45) calc(1.7rem + 1px)
+    );
+    background-position: 0 0.35rem;
+  }
+
+  /* Strip of washi tape stuck across the top of a card. */
+  .tape {
+    position: absolute;
+    top: -0.7rem;
+    left: 50%;
+    width: 5.5rem;
+    height: 1.4rem;
+    translate: -50% 0;
+    rotate: -3deg;
+    background: rgb(203 185 255 / 0.7);
+    border-left: 2px dotted rgb(255 255 255 / 0.7);
+    border-right: 2px dotted rgb(255 255 255 / 0.7);
+  }
+
+  .stamp-edge {
+    /* Perforated stamp edge via a radial mask. */
+    -webkit-mask: radial-gradient(circle at 4px 4px, transparent 2.5px, #000 3px) -4px -4px / 8px 8px;
+    mask: radial-gradient(circle at 4px 4px, transparent 2.5px, #000 3px) -4px -4px / 8px 8px;
+  }
+}
+
+@keyframes float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -5px; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; scale: 1; }
+  50% { opacity: 0.45; scale: 0.85; }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-twinkle {
+  animation: twinkle 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
