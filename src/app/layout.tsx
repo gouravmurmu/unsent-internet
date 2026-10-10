@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Caveat, Fredoka, Nunito_Sans, Pixelify_Sans } from "next/font/google";
-import { PrototypeBanner } from "@/components/prototype-banner";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
@@ -59,7 +58,6 @@ export default function RootLayout({
           Skip to content
         </a>
         <div className="flex min-h-dvh flex-col">
-          <PrototypeBanner />
           <SiteHeader />
           <main id="main" className="flex-1">
             {children}

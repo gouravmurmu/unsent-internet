@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Envelope } from "@/components/envelope";
 import { NoteCard } from "@/components/note-card";
 import { EmptyState, ErrorState } from "@/components/note-states";
@@ -11,13 +11,18 @@ export function LostAndFound() {
   const [note, setNote] = useState<Note | null | undefined>(undefined);
   const [error, setError] = useState(false);
   const [draw, setDraw] = useState(0);
+  const lastId = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     let live = true;
     setError(false);
     setNote(undefined);
-    randomNote(undefined)
-      .then((n) => live && setNote(n))
+    randomNote(lastId.current)
+      .then((n) => {
+        if (!live) return;
+        lastId.current = n?.id ?? lastId.current;
+        setNote(n);
+      })
       .catch(() => live && setError(true));
     return () => {
       live = false;

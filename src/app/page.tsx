@@ -90,9 +90,6 @@ export default function Home() {
             See more notes →
           </Link>
         </div>
-        <p className="mt-3 inline-block rounded-full border border-dashed border-ink/40 bg-paper px-3 py-1 text-sm text-ink-soft">
-          Sample notes for now. Real ones arrive once publishing goes live.
-        </p>
 
         <div className="mt-10">
           <LatestNotes />
