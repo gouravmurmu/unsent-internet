@@ -33,3 +33,13 @@ npm run build
 | --- | --- |
 | `SUPABASE_URL` | Supabase → Project Settings → Data API |
 | `SUPABASE_SECRET_KEY` | Supabase → Project Settings → API Keys → Secret keys |
+| `MODERATOR_PASSWORD` | Any password of 12+ characters you choose. Unlocks `/moderate`. |
+
+Add all three in Vercel → Project → Settings → Environment Variables, then redeploy.
+
+## Safety and moderation
+
+- Every note and reply is screened on the server (`src/server/screening.ts`). Emails, phone numbers, links and @handles are refused with a friendly message. Text that reads like a threat, explicit content or self-harm is saved but held for review, and the writer is shown support resources when it sounds like they may be at risk.
+- Held items, and published items with open reports, appear at `/moderate`. Sign in with `MODERATOR_PASSWORD`; you can approve, hide or remove each one. The page isn't linked anywhere and is excluded from search engines.
+- Writers can take down their own notes from the Mailbox with their recovery code.
+- Forms include a hidden honeypot field to catch simple bots, on top of the database rate limits.

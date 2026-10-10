@@ -8,6 +8,8 @@ const PROMISES = [
     title: "No names, no profiles",
     body: "You don't need an account to write or read. Other visitors never see who you are. We keep as little as we can, though no website can promise to be completely untraceable.",
     accent: "bg-cloud",
+    href: "/privacy",
+    more: "How anonymity works",
     icon: <Sparkle className="h-6 w-6 text-cloud" />,
   },
   {
@@ -15,6 +17,8 @@ const PROMISES = [
     title: "Kindness, not counts",
     body: "There are no likes, followers or leaderboards. You can leave a small kind word on a note, and that's the whole point.",
     accent: "bg-pink-soft",
+    href: null,
+    more: null,
     icon: <PixelHeart className="h-5 w-6 text-pink" />,
   },
   {
@@ -22,6 +26,8 @@ const PROMISES = [
     title: "Kept gentle",
     body: "No names of real people, no threats, no harassment, nothing that could help someone find you or anyone else. Notes can be reported and are reviewed by a human.",
     accent: "bg-butter-soft",
+    href: "/guidelines",
+    more: "Read the guidelines",
     icon: <Flower className="h-6 w-6 text-lilac" />,
   },
 ];
@@ -113,6 +119,11 @@ export default function Home() {
                 <h3 className="font-display text-xl font-semibold">{p.title}</h3>
               </div>
               <p className="mt-3 leading-relaxed">{p.body}</p>
+              {p.href && (
+                <Link href={p.href} className="mt-3 inline-block font-medium underline decoration-2 underline-offset-4">
+                  {p.more} →
+                </Link>
+              )}
             </div>
           ))}
         </div>

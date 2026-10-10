@@ -1,5 +1,6 @@
 import { getDb } from "@/server/db";
 import { fail, fromError, ok, readJson } from "@/server/http";
+import { screenText } from "@/server/screening";
 import { cleanText } from "@/server/text";
 import { getVisitor, hashRecoveryCode, newRecoveryCode, normaliseRecoveryCode } from "@/server/visitor";
 import { MOODS, validateNoteBody, type Mood } from "@/lib/notes";
@@ -25,9 +26,13 @@ export async function POST(req: Request) {
   const input = await readJson(req);
   if (input instanceof Response) return input;
 
+  // Honeypot: a field people never see, so only bots fill it in.
+  if (input.website) return fail(400, "That couldn't be sent.");
   const body = cleanText(input.body);
   const problem = validateNoteBody(body);
   if (problem) return fail(400, problem);
+  const screening = screenText(body);
+  if (screening.block) return fail(400, screening.block);
   const mood = MOODS.includes(input.mood as Mood) ? (input.mood as Mood) : null;
 
   // Reuse the writer's existing recovery code if their browser sent one, so all
@@ -36,15 +41,18 @@ export async function POST(req: Request) {
 
   try {
     const visitor = await getVisitor();
-    const { data, error } = await db.rpc("publish_note", {
+    const { data, error } = await db.rpc("submit_note", {
       p_body: body,
       p_mood: mood,
       p_session: visitor.sessionHash,
       p_ip: visitor.ipHash,
       p_recovery_hash: hashRecoveryCode(recoveryCode),
+      p_hold: screening.hold,
+      p_flags: screening.flags,
     });
     if (error) return fromError(error);
-    return ok({ note: data, recoveryCode }, 201);
+    const { status, ...note } = data as { status: string };
+    return ok({ note, recoveryCode, held: status !== "published", risk: screening.risk }, 201);
   } catch (err) {
     return fromError(err);
   }

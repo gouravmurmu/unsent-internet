@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Sparkle } from "@/components/doodles";
 import { Envelope } from "@/components/envelope";
+import { SupportResources } from "@/components/support-resources";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { ApiError, publishNote } from "@/lib/api";
 import { newId, readLocal, useDrafts, useRecoveryCode, type Draft } from "@/lib/local-store";
@@ -35,10 +36,12 @@ export function WritingRoom() {
   const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("writing");
   const [error, setError] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState({ held: false, risk: false });
 
   const editorId = useId();
   const counterId = useId();
   const editorRef = useRef<HTMLTextAreaElement>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   // Open a draft from the Mailbox (?draft=<id>).
   useEffect(() => {
@@ -109,8 +112,9 @@ export function WritingRoom() {
     setError(null);
     setPhase("sending");
     try {
-      const result = await publishNote({ body, mood, recoveryCode });
+      const result = await publishNote({ body, mood, recoveryCode, website: honeypotRef.current?.value ?? "" });
       setRecoveryCode(result.recoveryCode);
+      setOutcome({ held: result.held, risk: result.risk });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong and your note wasn't sent. It's still here, so you can try again.");
       setPhase("writing");
@@ -130,6 +134,7 @@ export function WritingRoom() {
 
   function writeAnother() {
     setCopied(false);
+    setOutcome({ held: false, risk: false });
     setBody("");
     setMood(null);
     setDraftId(null);
@@ -159,8 +164,22 @@ export function WritingRoom() {
     return (
       <div className="anim-fade-up mx-auto max-w-lg px-4 py-20 text-center sm:px-6" role="status">
         <Sparkle className="animate-twinkle mx-auto h-10 w-10 text-butter" />
-        <h1 className="mt-4 font-display text-4xl font-semibold">It&apos;s out there now.</h1>
-        <p className="mt-2 font-hand text-3xl">You can let it rest.</p>
+        {outcome.held ? (
+          <>
+            <h1 className="mt-4 font-display text-4xl font-semibold">It&apos;s safe in the mailbox.</h1>
+            <p className="mt-2 font-hand text-3xl">You can let it rest.</p>
+            <p className="mx-auto mt-4 max-w-md text-ink-soft">
+              A person will read it before it appears for others, just to keep this place gentle. That&apos;s all, it
+              isn&apos;t a judgement of you.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="mt-4 font-display text-4xl font-semibold">It&apos;s out there now.</h1>
+            <p className="mt-2 font-hand text-3xl">You can let it rest.</p>
+          </>
+        )}
+        {outcome.risk && <SupportResources className="mx-auto mt-8 max-w-md" />}
         {recoveryCode && (
           <div className="mx-auto mt-10 max-w-md rounded-[8px] border-2 border-dashed border-ink/40 bg-paper p-5 text-left">
             <p className="font-display text-lg font-medium">Your private recovery code</p>
@@ -281,6 +300,14 @@ export function WritingRoom() {
                 })}
               </div>
             </fieldset>
+
+            {/* Hidden from people; only bots fill it in. */}
+            <div className="hidden" aria-hidden="true">
+              <label>
+                Website
+                <input ref={honeypotRef} type="text" name="website" tabIndex={-1} autoComplete="off" />
+              </label>
+            </div>
 
             {error && (
               <p role="alert" className="mt-5 rounded-md border-2 border-[#b42357]/40 bg-pink-soft px-3 py-2 text-sm">
