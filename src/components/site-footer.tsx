@@ -29,8 +29,8 @@ export function SiteFooter() {
         <div>
           <p className="font-pixel text-sm uppercase tracking-wider text-ink-soft">Small print</p>
           <ul className="mt-3 space-y-1.5">
-            <li><a className="hover:underline" href="#guidelines">Community guidelines</a></li>
-            <li><a className="hover:underline" href="#anonymity">How anonymity works here</a></li>
+            <li><Link className="hover:underline" href="/#guidelines">Community guidelines</Link></li>
+            <li><Link className="hover:underline" href="/#anonymity">How anonymity works here</Link></li>
           </ul>
           <p className="mt-4 text-sm text-ink-soft">
             This is not a crisis service. If you are in danger, please contact your local emergency number.
