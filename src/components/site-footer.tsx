@@ -42,7 +42,7 @@ export function SiteFooter() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 font-pixel text-xs text-ink-soft sm:px-6">
           <span>best viewed with an open heart · any screen size</span>
           <span className="inline-flex items-center gap-2">
-            <span className="rounded border border-ink/30 bg-paper px-1.5 py-0.5">no cookies to track you</span>
+            <span className="rounded border border-ink/30 bg-paper px-1.5 py-0.5">no ads · no tracking</span>
             <span className="rounded border border-ink/30 bg-paper px-1.5 py-0.5">no likes · no followers</span>
           </span>
         </div>

@@ -6,6 +6,7 @@ import { NoteCard } from "@/components/note-card";
 import { EmptyState } from "@/components/note-states";
 import { useDrafts, useSavedNotes } from "@/lib/local-store";
 import { MOOD_META, timeAgo } from "@/lib/notes";
+import { YourNotes } from "./your-notes";
 
 const noop = () => () => {};
 
@@ -18,6 +19,8 @@ export function Mailbox() {
   return (
     <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_20rem]">
       <div className="space-y-14">
+        <YourNotes />
+
         <section aria-labelledby="drafts-title">
           <h2 id="drafts-title" className="font-display text-2xl font-semibold">Unsent drafts</h2>
           <div className="mt-5">
@@ -95,20 +98,16 @@ export function Mailbox() {
           <dl className="mt-3 space-y-3 text-sm leading-relaxed">
             <div>
               <dt className="font-semibold">Only in this browser</dt>
-              <dd>Drafts and saved notes. They don&apos;t follow you to other devices and disappear if you clear your browser data.</dd>
+              <dd>Drafts, saved notes and your recovery code. They don&apos;t follow you to other devices and disappear if you clear your browser data.</dd>
             </div>
             <div>
               <dt className="font-semibold">On our server</dt>
-              <dd>Notes you publish, kind reactions and replies, so other people can read them. None of it is tied to a name or account.</dd>
+              <dd>
+                Notes you publish, kind reactions and replies, so other people can read them. None of it is tied to a
+                name or account. A random, anonymous cookie helps us stop spam and limit kindness to once per note.
+              </dd>
             </div>
           </dl>
-        </div>
-        <div className="rounded-[8px] border-2 border-dashed border-ink/40 p-5 text-sm leading-relaxed">
-          <h2 className="font-display text-lg font-semibold">Finding your own notes</h2>
-          <p className="mt-2 text-ink-soft">
-            Coming soon: when you publish, you&apos;ll get a private recovery code. Keep it somewhere safe and you can
-            look up or take down your notes later, from any device.
-          </p>
         </div>
       </aside>
     </div>

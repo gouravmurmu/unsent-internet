@@ -117,3 +117,10 @@ export function newId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 }
+
+// ---- Recovery code ---------------------------------------------------------
+
+/** The private code that lets this writer find and take down their notes. */
+export function useRecoveryCode() {
+  return useLocal<string | null>("recovery-code", null);
+}

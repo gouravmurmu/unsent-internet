@@ -7,7 +7,7 @@ import { Sparkle } from "@/components/doodles";
 import { Envelope } from "@/components/envelope";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { ApiError, publishNote } from "@/lib/api";
-import { newId, readLocal, useDrafts, type Draft } from "@/lib/local-store";
+import { newId, readLocal, useDrafts, useRecoveryCode, type Draft } from "@/lib/local-store";
 import {
   MOOD_META,
   MOODS,
@@ -24,6 +24,8 @@ export function WritingRoom() {
   const params = useSearchParams();
   const reducedMotion = useReducedMotion();
   const [, setDrafts] = useDrafts();
+  const [recoveryCode, setRecoveryCode] = useRecoveryCode();
+  const [copied, setCopied] = useState(false);
 
   const [body, setBody] = useState("");
   const [mood, setMood] = useState<Mood | null>(null);
@@ -107,7 +109,8 @@ export function WritingRoom() {
     setError(null);
     setPhase("sending");
     try {
-      await publishNote({ body, mood });
+      const result = await publishNote({ body, mood, recoveryCode });
+      setRecoveryCode(result.recoveryCode);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong and your note wasn't sent. It's still here, so you can try again.");
       setPhase("writing");
@@ -126,6 +129,7 @@ export function WritingRoom() {
   }
 
   function writeAnother() {
+    setCopied(false);
     setBody("");
     setMood(null);
     setDraftId(null);
@@ -157,6 +161,25 @@ export function WritingRoom() {
         <Sparkle className="animate-twinkle mx-auto h-10 w-10 text-butter" />
         <h1 className="mt-4 font-display text-4xl font-semibold">It&apos;s out there now.</h1>
         <p className="mt-2 font-hand text-3xl">You can let it rest.</p>
+        {recoveryCode && (
+          <div className="mx-auto mt-10 max-w-md rounded-[8px] border-2 border-dashed border-ink/40 bg-paper p-5 text-left">
+            <p className="font-display text-lg font-medium">Your private recovery code</p>
+            <p className="mt-1 text-sm text-ink-soft">
+              It&apos;s saved in this browser. Keep a copy somewhere safe if you&apos;d like to find or take down your
+              notes from another device. Anyone with this code can do that, so don&apos;t share it.
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <code className="rounded-md border-2 border-ink bg-butter-soft px-3 py-1.5 font-pixel text-base tracking-wider">{recoveryCode}</code>
+              <button
+                type="button"
+                onClick={() => navigator.clipboard?.writeText(recoveryCode).then(() => setCopied(true), () => {})}
+                className="rounded-full border-[1.5px] border-ink/40 px-3 py-1 text-sm hover:bg-butter-soft"
+              >
+                {copied ? "Copied ✓" : "Copy"}
+              </button>
+            </div>
+          </div>
+        )}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link href="/discover" className="btn btn-secondary">Read what others left behind</Link>
           <button type="button" onClick={writeAnother} className="btn btn-primary">Write another</button>
