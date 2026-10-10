@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Flower, PixelHeart, Sparkle, Stamp, SquiggleUnderline } from "@/components/doodles";
-import { NoteCard } from "@/components/note-card";
-import { MOCK_NOTES } from "@/lib/mock-notes";
+import { LatestNotes } from "@/components/latest-notes";
 
 const PROMISES = [
   {
@@ -95,10 +94,8 @@ export default function Home() {
           Sample notes for now. Real ones arrive once publishing goes live.
         </p>
 
-        <div className="mt-10 grid items-start gap-x-7 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
-          {MOCK_NOTES.map((note, i) => (
-            <NoteCard key={note.id} note={note} index={i} preview />
-          ))}
+        <div className="mt-10">
+          <LatestNotes />
         </div>
       </section>
 

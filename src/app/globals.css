@@ -152,3 +152,92 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---- Kindness burst ---------------------------------------------------- */
+@keyframes burst {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.4) rotate(0deg); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1) rotate(var(--rot)); }
+}
+
+.burst-piece {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -6px 0 0 -6px;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+  animation: burst 900ms ease-out forwards;
+}
+
+/* ---- Envelope send-off (writing room) ----------------------------------- */
+@keyframes fold-in {
+  to { transform: translateY(40px) scale(0.35); opacity: 0; }
+}
+@keyframes flap-close {
+  from { transform: rotateX(180deg); }
+  to { transform: rotateX(0deg); }
+}
+@keyframes fly-away {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  30% { transform: translate(-6px, 6px) rotate(-4deg); opacity: 1; }
+  100% { transform: translate(180px, -260px) rotate(18deg) scale(0.6); opacity: 0; }
+}
+@keyframes envelope-in {
+  from { transform: translateY(30px) scale(0.9); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+.anim-fold-in { animation: fold-in 600ms ease-in forwards; }
+.anim-flap-close { transform-origin: top; animation: flap-close 450ms ease-in-out forwards; }
+.anim-fly-away { animation: fly-away 1000ms cubic-bezier(.5,0,.75,0) forwards; }
+.anim-envelope-in { animation: envelope-in 400ms ease-out both; }
+
+/* ---- Envelope opening (Lost & Found) ------------------------------------ */
+@keyframes flap-open {
+  from { transform: rotateX(0deg); }
+  to { transform: rotateX(180deg); }
+}
+@keyframes letter-rise {
+  0% { transform: translateY(40%); opacity: 0; }
+  40% { opacity: 1; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.anim-flap-open { transform-origin: top; animation: flap-open 500ms ease-in-out forwards; }
+.anim-letter-rise { animation: letter-rise 700ms 350ms ease-out both; }
+
+/* ---- Gentle fade for revealed content ---------------------------------- */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.anim-fade-up { animation: fade-up 350ms ease-out both; }
+
+/* ---- Loading shimmer ---------------------------------------------------- */
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgb(41 39 67 / 0.06) 25%, rgb(41 39 67 / 0.12) 50%, rgb(41 39 67 / 0.06) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 6px;
+}
+
+/* ---- Native dialog ------------------------------------------------------ */
+dialog.paper-dialog {
+  margin: auto;
+  max-width: min(28rem, calc(100vw - 2rem));
+  width: 100%;
+  border: 2px solid var(--color-ink);
+  border-radius: 10px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  box-shadow: 6px 6px 0 0 var(--color-ink);
+  padding: 0;
+}
+dialog.paper-dialog::backdrop {
+  background: rgb(41 39 67 / 0.35);
+}
