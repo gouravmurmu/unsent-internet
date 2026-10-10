@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { ReportButton } from "@/components/report-dialog";
+import { SupportResources } from "@/components/support-resources";
 import { listReplies, postReply, ApiError } from "@/lib/api";
 import { useIdList } from "@/lib/local-store";
 import { REPLY_MAX_LENGTH, timeAgo, validateReplyBody, type Reply } from "@/lib/notes";
@@ -14,6 +15,8 @@ export function Replies({ noteId, initialCount }: { noteId: string; initialCount
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<{ held: boolean; risk: boolean } | null>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
   const hidden = useIdList("hidden");
   const panelId = useId();
   const inputId = useId();
@@ -35,9 +38,11 @@ export function Replies({ noteId, initialCount }: { noteId: string; initialCount
     if (problem) return setFormError(problem);
     setSending(true);
     setFormError(null);
+    setNotice(null);
     try {
-      const reply = await postReply(noteId, draft);
-      setReplies((prev) => [...(prev ?? []), reply]);
+      const { reply, held, risk } = await postReply(noteId, draft, honeypotRef.current?.value ?? "");
+      if (!held) setReplies((prev) => [...(prev ?? []), reply]);
+      if (held || risk) setNotice({ held, risk });
       setDraft("");
     } catch (err) {
       setFormError(err instanceof ApiError ? err.message : "That didn't go through. Please try again.");
@@ -86,6 +91,7 @@ export function Replies({ noteId, initialCount }: { noteId: string; initialCount
 
           <form onSubmit={submit} className="pt-1">
             <label htmlFor={inputId} className="sr-only">Write a kind reply</label>
+            <input ref={honeypotRef} type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
             <textarea
               id={inputId}
               value={draft}
@@ -103,8 +109,14 @@ export function Replies({ noteId, initialCount }: { noteId: string; initialCount
                 {sending ? "Sending…" : "Reply"}
               </button>
             </div>
-            {formError && <p className="mt-1 text-sm text-[#b42357]">{formError}</p>}
+            {formError && <p role="alert" className="mt-1 text-sm text-[#b42357]">{formError}</p>}
+            {notice?.held && (
+              <p role="status" className="mt-1 text-sm text-ink-soft">
+                Thank you. A person will read your reply before it appears.
+              </p>
+            )}
           </form>
+          {notice?.risk && <SupportResources className="mt-2" />}
         </div>
       )}
     </div>

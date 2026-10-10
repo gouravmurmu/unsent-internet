@@ -51,7 +51,8 @@ export async function publishNote(input: {
   body: string;
   mood: Mood | null;
   recoveryCode: string | null;
-}): Promise<{ note: Note; recoveryCode: string }> {
+  website?: string;
+}): Promise<{ note: Note; recoveryCode: string; held: boolean; risk: boolean }> {
   return call("/api/notes", { method: "POST", body: input });
 }
 
@@ -63,8 +64,12 @@ export async function listReplies(noteId: string): Promise<Reply[]> {
   return (await call<{ replies: Reply[] }>(`/api/notes/${encodeURIComponent(noteId)}/replies`)).replies;
 }
 
-export async function postReply(noteId: string, body: string): Promise<Reply> {
-  return (await call<{ reply: Reply }>(`/api/notes/${encodeURIComponent(noteId)}/replies`, { method: "POST", body: { body } })).reply;
+export async function postReply(
+  noteId: string,
+  body: string,
+  website = "",
+): Promise<{ reply: Reply; held: boolean; risk: boolean }> {
+  return call(`/api/notes/${encodeURIComponent(noteId)}/replies`, { method: "POST", body: { body, website } });
 }
 
 export async function report(target: { kind: "note" | "reply"; id: string }, reason: ReportReason): Promise<void> {

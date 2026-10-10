@@ -29,11 +29,15 @@ export function SiteFooter() {
         <div>
           <p className="font-pixel text-sm uppercase tracking-wider text-ink-soft">Small print</p>
           <ul className="mt-3 space-y-1.5">
-            <li><Link className="hover:underline" href="/#guidelines">Community guidelines</Link></li>
-            <li><Link className="hover:underline" href="/#anonymity">How anonymity works here</Link></li>
+            <li><Link className="hover:underline" href="/guidelines">Community guidelines</Link></li>
+            <li><Link className="hover:underline" href="/privacy">Privacy and anonymity</Link></li>
           </ul>
           <p className="mt-4 text-sm text-ink-soft">
-            This is not a crisis service. If you are in danger, please contact your local emergency number.
+            This is not a crisis service. If you are in danger, please contact your local emergency number or{" "}
+            <a className="underline" href="https://findahelpline.com" target="_blank" rel="noopener noreferrer">
+              find a helpline
+            </a>
+            .
           </p>
         </div>
       </div>
